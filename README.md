@@ -12,6 +12,7 @@ query GetAllTodos {
   todos {
     id
     title
+    state
   }
 }
 
@@ -27,8 +28,18 @@ mutation createTodo {
   createTodo(title: "Cleanup the house") {
     id
     title
+    state
   }
 }
+
+// mark a todo as done. The state can also be changed to `open` or `forLater`
+mutation MarkTodoAsDone {
+  changeTodoState(id: 1, state: done) {
+    id
+    state
+  }
+}
+
 
 // Or we can also define parameters that are fetched from the JSON formatted parameters field below.
 mutation deleteTodo($id: Int!) {

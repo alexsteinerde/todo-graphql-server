@@ -6,6 +6,7 @@ extension Todo: FieldKeyProvider {
     enum FieldKeys: String {
         case id
         case title
+        case state
     }
 }
 

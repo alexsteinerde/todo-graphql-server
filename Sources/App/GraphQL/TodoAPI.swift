@@ -24,19 +24,32 @@ final class TodoAPI {
             .flatMap({ $0.delete(on: request) })
             .transform(to: true)
     }
+
+    struct ChangeTodoStateArguments: Codable {
+        let id: Int
+        let state: Todo.TodoState
+    }
+
+    func changeTodoState(request: Request, arguments: ChangeTodoStateArguments) throws -> EventLoopFuture<Todo> {
+        Todo.find(arguments.id, on: request)
+            .unwrap(or: Abort(.notFound))
+            .map ({ (todo) in
+                todo.state = arguments.state
+                return todo
+            })
+            .save(on: request)
+
+    }
 }
 
 extension TodoAPI: FieldKeyProvider {
     typealias FieldKey = FieldKeys
 
     enum FieldKeys: String {
-    // Field names for the arguments
-        case title // Argument to create a new todo
-        case id // Argument to delete a todo
-
     // Names for the GraphQL schema endpoints
         case todos // Get all todos
         case createTodo // Create a new todo
         case deleteTodo // Delete a todo
+        case changeTodoState // Mark a todo as done, open or forLater
     }
 }

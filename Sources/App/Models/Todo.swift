@@ -9,10 +9,19 @@ final class Todo: SQLiteModel {
     /// A title describing what this `Todo` entails.
     var title: String
 
+    var state: TodoState
+
     /// Creates a new `Todo`.
-    init(id: Int? = nil, title: String) {
+    init(id: Int? = nil, title: String, state: TodoState = .open) {
         self.id = id
         self.title = title
+        self.state = state
+    }
+
+    enum TodoState: String, CaseIterable {
+        case open
+        case done
+        case forLater
     }
 }
 
@@ -24,3 +33,10 @@ extension Todo: Content { }
 
 /// Allows `Todo` to be used as a dynamic parameter in route definitions.
 extension Todo: Parameter { }
+
+/// Allows `Todo.TodoState` to be stored in the database.
+extension Todo.TodoState: Content, SQLiteEnumType {
+    static func reflectDecoded() throws -> (Todo.TodoState, Todo.TodoState) {
+        return (.done, .open) // Provide two unique cases
+    }
+}
